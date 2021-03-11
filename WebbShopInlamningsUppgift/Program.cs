@@ -1,4 +1,5 @@
 ﻿using System;
+using WebbShopInlamningsUppgift.Controllers;
 using WebbShopInlamningsUppgift.Database;
 
 namespace WebbShopInlamningsUppgift
@@ -8,6 +9,7 @@ namespace WebbShopInlamningsUppgift
         static void Main(string[] args)
         {
             Seeder.Seed();
+            Test.Run();
         }
     }
 }

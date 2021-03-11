@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using WebbShopInlamningsUppgift.Database;
 using WebbShopInlamningsUppgift.Models;
 
 namespace WebbShopInlamningsUppgift.API
@@ -9,12 +12,46 @@ namespace WebbShopInlamningsUppgift.API
     {
         public int Login(string userName, string userPassword)
         {
-            //TODO: Implementera login
-            return 0;
+            using (var db = new WebbshopContext())
+            {
+                try
+                {
+                    var user = db.Users.FirstOrDefault(u => u.Name == userName && u.Password == userPassword);
+                    if(user != null)
+                    {
+                        user.IsActive = true;
+                        user.SessionTimer = DateTime.Now;
+                        db.SaveChanges();
+
+                        return user.ID;
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Invalid name- or password.");  
+                }
+                return 0;
+            }
         }
         public void Logout(int userId)
         {
-            //TODO: Implementera logout
+            using (var db = new WebbshopContext())
+            {
+                try
+                {
+                    var user = db.Users.FirstOrDefault(u => u.ID == userId);
+                    if (user != null)
+                    {
+                        user.IsActive = false;
+                        user.SessionTimer = DateTime.MinValue;
+                        db.SaveChanges();
+                    }
+                }
+                catch (Exception)
+                {
+
+                }
+            }
         }
         public List<BookCategory> GetCategories()
         {
