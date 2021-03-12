@@ -198,7 +198,6 @@ namespace WebbShopInlamningsUppgift.API
 
         public bool BuyBook(int userID, int bookID)
         {
-            //TODO: Lägg till möjligheten att köpa en bok om användare fortfarande är aktiv
             using (var db = new WebbshopContext())
             {
                 try
@@ -231,6 +230,7 @@ namespace WebbShopInlamningsUppgift.API
                                     PurchaseDate = DateTime.Now
                                 };
                                 db.SoldBooks.Add(soldBook);
+                                book.Amount -= 1;
                                 db.SaveChanges();
                                 return true;
                             }
