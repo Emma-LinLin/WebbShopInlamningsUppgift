@@ -55,46 +55,194 @@ namespace WebbShopInlamningsUppgift.API
         }
         public List<BookCategory> GetCategories()
         {
-            //TODO: Lägg till möjligheten att hämta alla kategorier
-            List<BookCategory> listOfCategories = new List<BookCategory>();
-
-            return listOfCategories;
+            using (var db = new WebbshopContext())
+            {
+                try
+                {
+                    var listOfCategories = db.BookCategories.OrderBy(c => c.Genere).ToList();
+                    if(listOfCategories.Count > 0)
+                    {
+                        return listOfCategories;
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Failed to find book categories");
+                }
+                return new List<BookCategory>();
+            }
+            
         }
 
         public List<BookCategory> GetCategories(string keyword)
         {
-            //TODO: Lägg till möjligheten att hämta alla kategorier baserat på sökresultat
-            List<BookCategory> listOfCategories = new List<BookCategory>();
-
-            return listOfCategories;
+            using (var db = new WebbshopContext())
+            {
+                try
+                {
+                    var listOfCategories = db.BookCategories.Where(b => b.Genere.Contains(keyword)).ToList();
+                    if (listOfCategories.Count > 0)
+                    {
+                        return listOfCategories;
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Failed to find book categories based on input");
+                }
+                return new List<BookCategory>();
+            }
         }
 
-        public List<BookCategory> GetCategories(int CategoryId)
+        public List<Books> GetCategories(int CategoryId)
         {
-            //TODO: Lägg till möjligheten att hämta alla böcker med samma kategori för ID
-            List<BookCategory> listOfCategories = new List<BookCategory>();
+            using (var db = new WebbshopContext())
+            {
+                try
+                {
+                    var listOfBooks = db.Books.Include(b => b.BookCategory).Where(b => b.BookCategoryId == CategoryId).ToList();
+                    if (listOfBooks.Count > 0)
+                    {
+                        return listOfBooks;
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Failed to find books based on input");
+                }
+                return new List<Books>();
+            }
+        }
+        public List<Books> GetAvailableBooks(int CategoryId)
+        {
+            using (var db = new WebbshopContext())
+            {
+                try
+                {
+                    var listOfAvailableBooks = db.Books.Include(b => b.BookCategory)
+                        .Where(b => b.BookCategoryId == CategoryId)
+                        .Where(b => b.Amount > 0).ToList();
+                    
+                    if (listOfAvailableBooks.Count > 0)
+                    {
+                        return listOfAvailableBooks;
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Failed to find books based on input");
+                }
+                return new List<Books>();
+            }
+        }
 
-            return listOfCategories;
-        }
-        public List<BookCategory> GetAvailableBooks(int CategoryId)
+        public string GetBook(int bookId)
         {
-            //TODO: Lägg till möjligheten att hämta alla böcker som har Amount > 0, inom samma category
-            List<BookCategory> listOfCategories = new List<BookCategory>();
+            using (var db = new WebbshopContext())
+            {
+                try
+                {
+                    var book = db.Books.Include(b => b.BookCategory)
+                        .FirstOrDefault(b => b.ID == bookId);
+                    if(book != null)
+                    {
+                        return $"Title: {book.Title} - Author: {book.Author}\nGenere: {book.BookCategory.Genere}, Price: {book.Price}";
+                    }
+                    
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Failed to find book");
+                }
+                return string.Empty;
+            }
+        }
+        public List<Books> GetBooks(string keyword)
+        {
+            using (var db = new WebbshopContext())
+            {
+                try
+                {
+                    var listOfBooks = db.Books.Where(b => b.Title.Contains(keyword)).ToList();
+                    if (listOfBooks.Count > 0)
+                    {
+                        return listOfBooks;
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Failed to find book");
+                }
+                return new List<Books>();
+            }
+        }
+        public List<Books> GetAuthor(string keyword)
+        {
+            using (var db = new WebbshopContext())
+            {
+                try
+                {
+                    var listOfBooks = db.Books.Where(b => b.Author.Contains(keyword)).ToList();
+                    if (listOfBooks.Count > 0)
+                    {
+                        return listOfBooks;
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Failed to find books");
+                }
+                return new List<Books>();
+            }
+        }
 
-            return listOfCategories;
-        }
+        public bool BuyBook(int userID, int bookID)
+        {
+            //TODO: Lägg till möjligheten att köpa en bok om användare fortfarande är aktiv
+            using (var db = new WebbshopContext())
+            {
+                try
+                {
+                    var user = db.Users.FirstOrDefault(u => u.ID == userID);
+                    if(user == null)
+                    {
+                        Console.WriteLine("User does not exist");
+                        return false;
+                    }
 
-        public void GetBook(int bookId)
-        {
-            //TODO: Lägg till metod for Description, vad den har för titel, kategori, författare yada-yada
-        }
-        public void GetBooks(string keyword)
-        {
-            //TODO: Lägg till metod för matchande böcker (samma kategori?)
-        }
-        public void GetAuthor(string keyword)
-        {
-            //TODO: Lägg till möjligheten att lista alla böcker baserad på samma författare
+                    var isUserActive = user.IsActive;
+                    if (isUserActive)
+                    {
+                        var timer = DateTime.Now - user.SessionTimer;
+                        var minutes = timer.TotalMinutes;
+                        if(minutes < 5)
+                        {
+                            var book = db.Books.Include(b => b.BookCategory).FirstOrDefault(b => b.ID == bookID);
+                            if(book != null)
+                            {
+                                var soldBook = new SoldBooks 
+                                { 
+                                    Title = book.Title, 
+                                    Author = book.Author, 
+                                    Price = book.Price, 
+                                    Amount = book.Amount, 
+                                    BookCategory = book.BookCategory, 
+                                    UsersId = userID, 
+                                    PurchaseDate = DateTime.Now
+                                };
+                                db.SoldBooks.Add(soldBook);
+                                db.SaveChanges();
+                                return true;
+                            }
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Failed purchase");
+                }
+                return false;
+            }
         }
 
         //--------------------------------------------------------------------------------------
