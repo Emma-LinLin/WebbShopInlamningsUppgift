@@ -8,8 +8,9 @@ namespace WebbShopInlamningsUppgift
     {
         static void Main(string[] args)
         {
-            Seeder.Seed();
-            Test.Run();
+            //Seeder.Seed();
+            //Test.Run();
+            Admin.Run();
         }
     }
 }

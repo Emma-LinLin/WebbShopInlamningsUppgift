@@ -79,7 +79,7 @@ namespace WebbShopInlamningsUppgift.Database
         /// <param name="db"></param>
         /// <param name="bookTitle"></param>
         /// <param name="bookGenere"></param>
-        private static void SetBookGenere(WebbshopContext db, string bookTitle, string bookGenere)
+        public static void SetBookGenere(WebbshopContext db, string bookTitle, string bookGenere)
         {
             var book = db.Books.FirstOrDefault(b => b.Title == bookTitle);
             if (book != null)
