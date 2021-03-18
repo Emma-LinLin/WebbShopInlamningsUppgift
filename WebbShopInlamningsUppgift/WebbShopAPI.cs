@@ -1033,6 +1033,45 @@ namespace WebbShopInlamningsUppgift
         }
 
         /// <summary>
+        /// Allows you to activate user
+        /// </summary>
+        /// <param name="adminID"></param>
+        /// <param name="userID"></param>
+        /// <returns>boolean true if success, false if not</returns>
+        public bool ActivateUser(int adminID, int userID)
+        {
+            using (var db = new WebbshopContext())
+            {
+                try
+                {
+                    var adminUser = db.Users.FirstOrDefault(u => u.ID == adminID);
+                    bool isActive = CheckSessionTimer(adminUser);
+
+                    if (!isActive)
+                    {
+                        Console.WriteLine("You have to login to proceed");
+                        return false;
+                    }
+                    if (adminUser.IsAdmin)
+                    {
+                        var user = db.Users.FirstOrDefault(u => u.ID == userID);
+                        if (user != null)
+                        {
+                            user.IsActive = true;
+                            db.SaveChanges();
+                            return true;
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Failed to activate user");
+                }
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Allows you to inactivate a user
         /// </summary>
         /// <param name="adminID"></param>
@@ -1097,9 +1136,5 @@ namespace WebbShopInlamningsUppgift
                 }
             }
         }
-
-
-
-
     }
 }
