@@ -2,7 +2,7 @@
 using WebbShopInlamningsUppgift.Database;
 using WebbShopInlamningsUppgift.Models;
 
-namespace WebbShopInlamningsUppgift.API
+namespace WebbShopInlamningsUppgift.Helpers
 {
     /// <summary>
     /// Helper is used mainly to get ID's of user-object, category-object and book-object 
@@ -16,10 +16,10 @@ namespace WebbShopInlamningsUppgift.API
         /// <returns>int ID if successful, 0 if not.</returns>
         public static int GetUserID(string name)
         {
-            using(var db = new WebbshopContext())
+            using (var db = new WebbshopContext())
             {
                 var user = db.Users.FirstOrDefault(u => u.Name == name);
-                if(user != null)
+                if (user != null)
                 {
                     return user.ID;
                 }
@@ -37,7 +37,7 @@ namespace WebbShopInlamningsUppgift.API
             using (var db = new WebbshopContext())
             {
                 var book = db.Books.FirstOrDefault(b => b.Title == title);
-                if(book != null)
+                if (book != null)
                 {
                     return book.ID;
                 }

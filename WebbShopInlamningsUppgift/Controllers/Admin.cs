@@ -1,5 +1,5 @@
 ﻿using System;
-using WebbShopInlamningsUppgift.API;
+using WebbShopInlamningsUppgift.Helpers;
 
 namespace WebbShopInlamningsUppgift.Controllers
 {

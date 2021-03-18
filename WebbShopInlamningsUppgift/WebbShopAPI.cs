@@ -5,7 +5,7 @@ using System.Linq;
 using WebbShopInlamningsUppgift.Database;
 using WebbShopInlamningsUppgift.Models;
 
-namespace WebbShopInlamningsUppgift.API
+namespace WebbShopInlamningsUppgift
 {
     class WebbShopAPI
     {
@@ -22,7 +22,7 @@ namespace WebbShopInlamningsUppgift.API
                 try
                 {
                     var user = db.Users.FirstOrDefault(u => u.Name == userName && u.Password == userPassword);
-                    if(user != null)
+                    if (user != null)
                     {
                         user.IsActive = true;
                         user.SessionTimer = DateTime.Now;
@@ -34,7 +34,7 @@ namespace WebbShopInlamningsUppgift.API
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"Exception was thrown: {e.Message}");  
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return 0;
             }
@@ -74,7 +74,7 @@ namespace WebbShopInlamningsUppgift.API
                 try
                 {
                     var listOfCategories = db.BookCategories.OrderBy(c => c.Genere).ToList();
-                    if(listOfCategories.Count > 0)
+                    if (listOfCategories.Count > 0)
                     {
                         return listOfCategories;
                     }
@@ -85,7 +85,7 @@ namespace WebbShopInlamningsUppgift.API
                 }
                 return new List<BookCategory>();
             }
-            
+
         }
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace WebbShopInlamningsUppgift.API
                     var listOfAvailableBooks = db.Books.Include(b => b.BookCategory)
                         .Where(b => b.BookCategoryId == CategoryId)
                         .Where(b => b.Amount > 0).ToList();
-                    
+
                     if (listOfAvailableBooks.Count > 0)
                     {
                         return listOfAvailableBooks;
@@ -179,11 +179,11 @@ namespace WebbShopInlamningsUppgift.API
                 {
                     var book = db.Books.Include(b => b.BookCategory)
                         .FirstOrDefault(b => b.ID == bookId);
-                    if(book != null)
+                    if (book != null)
                     {
                         return $"Title: {book.Title} - Author: {book.Author}\nGenere: {book.BookCategory.Genere}, Price: {book.Price}";
                     }
-                    
+
                 }
                 catch (Exception)
                 {
@@ -256,7 +256,7 @@ namespace WebbShopInlamningsUppgift.API
                 try
                 {
                     var user = db.Users.FirstOrDefault(u => u.ID == userID);
-                    if(user == null)
+                    if (user == null)
                     {
                         Console.WriteLine("User does not exist");
                         return false;
@@ -270,14 +270,14 @@ namespace WebbShopInlamningsUppgift.API
                     }
 
                     var book = db.Books.Include(b => b.BookCategory).FirstOrDefault(b => b.ID == bookID);
-                    if(book != null)
+                    if (book != null)
                     {
-                        if(book.Amount == 0)
+                        if (book.Amount == 0)
                         {
                             Console.WriteLine("Book not available in stock.");
                             return false;
                         }
-                        if(book.Amount > 0)
+                        if (book.Amount > 0)
                         {
                             var soldBook = new SoldBooks
                             {
@@ -336,7 +336,7 @@ namespace WebbShopInlamningsUppgift.API
             using (var db = new WebbshopContext())
             {
                 var user = db.Users.FirstOrDefault(u => u.Name == name);
-                if(user == null && password == passwordVerify)
+                if (user == null && password == passwordVerify)
                 {
                     var newlyCreatedUser = new Users
                     {
@@ -368,7 +368,7 @@ namespace WebbShopInlamningsUppgift.API
         /// <returns>boolean true if successful, false if not</returns>
         public bool AddBook(int adminId, string title, string author, int price, int amount, int bookID = default)
         {
-            using(var db = new WebbshopContext())
+            using (var db = new WebbshopContext())
             {
                 try
                 {
@@ -420,8 +420,8 @@ namespace WebbShopInlamningsUppgift.API
         //Assumption that this method should return true or false
         public bool SetAmount(int adminId, int bookId, int newAmount)
         {
-            
-            using(var db = new WebbshopContext())
+
+            using (var db = new WebbshopContext())
             {
                 try
                 {
@@ -459,7 +459,7 @@ namespace WebbShopInlamningsUppgift.API
         /// <returns>list of users if successful, empty list if not</returns>
         public List<Users> ListUsers(int adminId)
         {
-            using(var db = new WebbshopContext())
+            using (var db = new WebbshopContext())
             {
                 try
                 {
@@ -578,7 +578,7 @@ namespace WebbShopInlamningsUppgift.API
         public bool DeleteBook(int adminId, int bookId)
         {
             // would like to add ON DELETE SET NULL (Unsure of correct set up for this one, possibly modelbuilder in context(?))
-            using(var db = new WebbshopContext())
+            using (var db = new WebbshopContext())
             {
                 try
                 {
@@ -593,15 +593,15 @@ namespace WebbShopInlamningsUppgift.API
                     if (adminUser.IsAdmin)
                     {
                         var book = db.Books.FirstOrDefault(b => b.ID == bookId);
-                        if(book != null)
+                        if (book != null)
                         {
-                            if(book.Amount > 0)
+                            if (book.Amount > 0)
                             {
                                 book.Amount -= 1;
                                 db.SaveChanges();
                                 return true;
                             }
-                            if(book.Amount == 0)
+                            if (book.Amount == 0)
                             {
                                 db.Books.Remove(book);
                                 db.SaveChanges();
@@ -610,7 +610,7 @@ namespace WebbShopInlamningsUppgift.API
                         }
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
                 }
@@ -670,7 +670,7 @@ namespace WebbShopInlamningsUppgift.API
         /// <returns>boolean true if successful, false if not</returns>
         public bool AddBookToCategory(int adminId, int bookId, int categoryId)
         {
-            using(var db = new WebbshopContext())
+            using (var db = new WebbshopContext())
             {
                 try
                 {
@@ -686,7 +686,7 @@ namespace WebbShopInlamningsUppgift.API
                     {
                         var book = db.Books.FirstOrDefault(b => b.ID == bookId);
                         var bookCategory = db.BookCategories.FirstOrDefault(b => b.ID == categoryId);
-                        
+
                         book.BookCategoryId = bookCategory.ID;
                         db.SaveChanges();
                         return true;
@@ -764,19 +764,19 @@ namespace WebbShopInlamningsUppgift.API
                     if (adminUser.IsAdmin)
                     {
                         var category = db.BookCategories.FirstOrDefault(b => b.ID == categoryId);
-                        if(category != null)
+                        if (category != null)
                         {
                             var categoryRelation = db.Books
                                 .Include(b => b.BookCategory)
                                 .Where(b => b.BookCategoryId == categoryId).ToList();
 
-                            if(categoryRelation.Count == 0)
+                            if (categoryRelation.Count == 0)
                             {
                                 db.BookCategories.Remove(category);
                                 db.SaveChanges();
                                 return true;
                             }
-                            if(categoryRelation.Count > 0)
+                            if (categoryRelation.Count > 0)
                             {
                                 Console.WriteLine("Failed to delete category, there are books related to this category.");
                                 return false;
@@ -844,7 +844,7 @@ namespace WebbShopInlamningsUppgift.API
         /// <returns>list of sold books if successful</returns>
         public List<SoldBooks> SoldItems(int adminID)
         {
-            using(var db = new WebbshopContext())
+            using (var db = new WebbshopContext())
             {
                 try
                 {
@@ -962,7 +962,7 @@ namespace WebbShopInlamningsUppgift.API
         /// <returns>true if success, false if fail</returns>
         public bool Promote(int adminID, int userID)
         {
-            using(var db = new WebbshopContext())
+            using (var db = new WebbshopContext())
             {
                 try
                 {
@@ -1079,7 +1079,7 @@ namespace WebbShopInlamningsUppgift.API
         /// <returns>boolean true if timer < 15, false if not.</returns>
         public bool CheckSessionTimer(Users user)
         {
-            using(var db = new WebbshopContext())
+            using (var db = new WebbshopContext())
             {
                 var timer = DateTime.Now - user.SessionTimer;
                 var minutes = timer.TotalMinutes;
