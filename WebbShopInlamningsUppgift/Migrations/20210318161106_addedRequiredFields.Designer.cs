@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebbShopInlamningsUppgift.Database;
 
 namespace WebbShopInlamningsUppgift.Migrations
 {
     [DbContext(typeof(WebbshopContext))]
-    partial class WebbshopContextModelSnapshot : ModelSnapshot
+    [Migration("20210318161106_addedRequiredFields")]
+    partial class addedRequiredFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

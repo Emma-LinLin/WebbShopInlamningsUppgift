@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using WebbShopInlamningsUppgift.Models;
 
 namespace WebbShopInlamningsUppgift.Database
 {
+    /// <summary>
+    /// Database context
+    /// </summary>
     class WebbshopContext : DbContext
     {
         private const string DatabaseName = "WebbShopEmmaL";

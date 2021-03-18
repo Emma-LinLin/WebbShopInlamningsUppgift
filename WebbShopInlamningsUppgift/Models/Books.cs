@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace WebbShopInlamningsUppgift.Models
 {
+    /// <summary>
+    /// Represents books in database
+    /// </summary>
     class Books
     {
         [Key]

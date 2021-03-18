@@ -1,13 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using WebbShopInlamningsUppgift.Models;
 
 namespace WebbShopInlamningsUppgift.Database
 {
+    /// <summary>
+    /// Seeder allows you to add mock-data
+    /// </summary>
     class Seeder
     {
+        /// <summary>
+        /// Adds mock-data to database
+        /// </summary>
         public static void Seed()
         {
             using (var db = new WebbshopContext())

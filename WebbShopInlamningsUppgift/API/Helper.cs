@@ -1,14 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using WebbShopInlamningsUppgift.Database;
 using WebbShopInlamningsUppgift.Models;
 
 namespace WebbShopInlamningsUppgift.API
 {
+    /// <summary>
+    /// Helper is used mainly to get ID's of user-object, category-object and book-object 
+    /// </summary>
     class Helper
     {
+        /// <summary>
+        /// Allows you to get the Id of an user
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns>int ID if successful, 0 if not.</returns>
         public static int GetUserID(string name)
         {
             using(var db = new WebbshopContext())
@@ -22,6 +27,11 @@ namespace WebbShopInlamningsUppgift.API
             }
         }
 
+        /// <summary>
+        /// Allows you to get the ID of a book
+        /// </summary>
+        /// <param name="title"></param>
+        /// <returns>int ID if successful, 0 if not</returns>
         public static int GetBookID(string title)
         {
             using (var db = new WebbshopContext())
@@ -35,6 +45,11 @@ namespace WebbShopInlamningsUppgift.API
             }
         }
 
+        /// <summary>
+        /// Allows you to get an book-object based on title
+        /// </summary>
+        /// <param name="title"></param>
+        /// <returns>Book</returns>
         public static Books GetBookObject(string title)
         {
             using (var db = new WebbshopContext())
@@ -48,6 +63,11 @@ namespace WebbShopInlamningsUppgift.API
             }
         }
 
+        /// <summary>
+        /// Allows you get the ID of a category based on genere
+        /// </summary>
+        /// <param name="genere"></param>
+        /// <returns>int ID if successful, 0 if not.</returns>
         public static int GetCategoryId(string genere)
         {
             using (var db = new WebbshopContext())
