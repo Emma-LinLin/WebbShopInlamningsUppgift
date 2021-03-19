@@ -25,8 +25,8 @@ namespace WebbShopInlamningsUppgift.Database
                 {
                     List<Users> users = new List<Users>
                     {
-                        new Users{Name = "TestCustomer", Password = "Codic2021" },
-                        new Users{Name = "Administrator", Password = "CodicRulez", IsAdmin = true }
+                        new Users{Name = "TestCustomer", Password = "Codic2021", IsActive = true, IsAdmin = false },
+                        new Users{Name = "Administrator", Password = "CodicRulez", IsActive = true, IsAdmin = true }
                     };
                     db.Users.AddRange(users);
                     db.SaveChanges();

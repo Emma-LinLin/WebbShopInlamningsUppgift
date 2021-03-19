@@ -21,6 +21,7 @@ namespace WebbShopInlamningsUppgift.Controllers
 
             //-------------------------------------------------------------------------
 
+            Console.WriteLine("Adding new book... ");
             bool success = api.AddBook(userId, "Sagan om ringen", "J.R.R Tolkien", 300, 5);
             if (success)
             {
@@ -29,14 +30,15 @@ namespace WebbShopInlamningsUppgift.Controllers
 
             //-------------------------------------------------------------------------
 
+            Console.WriteLine("Setting amount... ");
             success = api.SetAmount(userId, 2, 4);
             if (success)
             {
-                Console.WriteLine("Added new amount to book.");
+                Console.WriteLine("Successfully added new amount.");
             }
 
             //-------------------------------------------------------------------------
-
+            Console.WriteLine("Searching for all users...");
             var list = api.ListUsers(userId);
             foreach (var user in list)
             {
@@ -45,6 +47,7 @@ namespace WebbShopInlamningsUppgift.Controllers
 
             //-------------------------------------------------------------------------
 
+            Console.WriteLine("Searching for all users matching keyword \"te\"... ");
             list = api.FindUser(userId, "te");
             foreach (var user in list)
             {
@@ -52,10 +55,11 @@ namespace WebbShopInlamningsUppgift.Controllers
             }
 
             //-------------------------------------------------------------------------
-
+            
             var book = Helper.GetBookObject("Sagan om ringen");
             if (book != null)
             {
+                Console.WriteLine($"Updating {book.Title} with new price 350...");
                 success = api.UpdateBook(userId, book.ID, book.Title, book.Author, 350);
                 if (success)
                 {
@@ -65,12 +69,14 @@ namespace WebbShopInlamningsUppgift.Controllers
 
             //-------------------------------------------------------------------------
 
+            Console.WriteLine("Adding new category... ");
             success = api.AddCategory(userId, "Fantasy");
             if (success)
             {
                 Console.WriteLine("Added category: Fantasy");
             }
 
+            Console.WriteLine("Adding new category... ");
             success = api.AddCategory(userId, "Action");
             if (success)
             {
@@ -79,26 +85,29 @@ namespace WebbShopInlamningsUppgift.Controllers
 
             //-------------------------------------------------------------------------
 
+            Console.WriteLine("Adding book to category... ");
             var bookId = Helper.GetBookID("Sagan om ringen");
             var categoryId = Helper.GetCategoryId("Fantasy");
 
             success = api.AddBookToCategory(userId, bookId, categoryId);
             if (success)
             {
-                Console.WriteLine("Successfully added book to category");
+                Console.WriteLine("Successfully added book Sagan om ringen to category Fantasy");
             }
 
             //-------------------------------------------------------------------------
 
+            Console.WriteLine("Updating category... ");
             categoryId = Helper.GetCategoryId("Action");
             success = api.UpdateCategory(userId, categoryId, "ActionPower");
             if (success)
             {
-                Console.WriteLine("Successfully updated category.");
+                Console.WriteLine("Successfully updated category genere Action to ActionPower.");
             }
 
             //-------------------------------------------------------------------------
 
+            Console.WriteLine("Adding new user... ");
             success = api.AddUser(userId, "Legolas", "L3mb4sBr34d");
             if (success)
             {
@@ -107,11 +116,12 @@ namespace WebbShopInlamningsUppgift.Controllers
 
             //-------------------------------------------------------------------------
 
+            Console.WriteLine("Promoting \"Legolas\"... ");
             var customerId = Helper.GetUserID("Legolas");
             success = api.Promote(userId, customerId);
             if (success)
             {
-                Console.WriteLine("Sucessfully promoted Legolas");
+                Console.WriteLine("Sucessfully promoted Legolas to Admin");
             }
 
             api.Logout(userId);
@@ -122,17 +132,22 @@ namespace WebbShopInlamningsUppgift.Controllers
             userId = api.Login("Legolas", "L3mb4sBr34d");
             Console.WriteLine(userId);
 
+            Console.WriteLine("Purchasing \"Sagan om ringen\"... ");
             bookId = Helper.GetBookID("Sagan om ringen");
             success = api.BuyBook(userId, bookId);
             if (success)
             {
                 Console.WriteLine("Purchase successful.");
             }
+
+            Console.WriteLine("Purchasing \"Sagan om ringen\"... ");
             success = api.BuyBook(userId, bookId);
             if (success)
             {
                 Console.WriteLine("Purchase successful.");
             }
+
+            Console.WriteLine("Purchasing \"Sagan om ringen\"... ");
             success = api.BuyBook(userId, bookId);
             if (success)
             {
@@ -147,6 +162,7 @@ namespace WebbShopInlamningsUppgift.Controllers
             userId = api.Login("Administrator", "CodicRulez");
             Console.WriteLine(userId);
 
+            Console.WriteLine("Searching for all sold items...");
             var soldBooks = api.SoldItems(userId);
             if(soldBooks.Count > 0)
             {
@@ -156,18 +172,21 @@ namespace WebbShopInlamningsUppgift.Controllers
                 }
             }
 
+            Console.WriteLine("Searching for total price of all sold items... ");
             int moneyEarned = api.MoneyEarned(userId);
             if(moneyEarned > 0)
             {
                 Console.WriteLine($"Money earned: {moneyEarned}");
             }
 
+            Console.WriteLine("Searching \"Best customer\"... ");
             int bestCustomer = api.BestCustomer(userId);
             if(bestCustomer > 0)
             {
                 Console.WriteLine($"Best customer's ID: {bestCustomer}");
             }
 
+            Console.WriteLine("Deleting book \"I Robot\"... ");
             bookId = Helper.GetBookID("I Robot");
             success = api.DeleteBook(userId, bookId);
             if (success)
@@ -175,7 +194,7 @@ namespace WebbShopInlamningsUppgift.Controllers
                 Console.WriteLine("Successfully deleted book");
             }
 
-            
+            Console.WriteLine("Deleting category \"Romance\"... ");
             categoryId = Helper.GetCategoryId("Romance");
             success = api.DeleteCategory(userId, categoryId);
             if (success)
@@ -183,6 +202,7 @@ namespace WebbShopInlamningsUppgift.Controllers
                 Console.WriteLine("Successfully deleted category");
             }
 
+            Console.WriteLine("Deleting category \"Fantasy\"... ");
             categoryId = Helper.GetCategoryId("Fantasy");
             success = api.DeleteCategory(userId, categoryId);
             if (success)

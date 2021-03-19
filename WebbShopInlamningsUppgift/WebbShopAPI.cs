@@ -57,9 +57,9 @@ namespace WebbShopInlamningsUppgift
                         db.SaveChanges();
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
             }
         }
@@ -79,9 +79,9 @@ namespace WebbShopInlamningsUppgift
                         return listOfCategories;
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Console.WriteLine("Failed to find book categories");
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return new List<BookCategory>();
             }
@@ -105,9 +105,9 @@ namespace WebbShopInlamningsUppgift
                         return listOfCategories;
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Console.WriteLine("Failed to find book categories based on input");
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return new List<BookCategory>();
             }
@@ -130,9 +130,9 @@ namespace WebbShopInlamningsUppgift
                         return listOfBooks;
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Console.WriteLine("Failed to find books based on input");
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return new List<Books>();
             }
@@ -158,9 +158,9 @@ namespace WebbShopInlamningsUppgift
                         return listOfAvailableBooks;
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Console.WriteLine("Failed to find books based on input");
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return new List<Books>();
             }
@@ -185,9 +185,9 @@ namespace WebbShopInlamningsUppgift
                     }
 
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Console.WriteLine("Failed to find book");
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return string.Empty;
             }
@@ -210,9 +210,9 @@ namespace WebbShopInlamningsUppgift
                         return listOfBooks;
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Console.WriteLine("Failed to find book");
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return new List<Books>();
             }
@@ -235,9 +235,9 @@ namespace WebbShopInlamningsUppgift
                         return listOfBooks;
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Console.WriteLine("Failed to find books");
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return new List<Books>();
             }
@@ -277,28 +277,25 @@ namespace WebbShopInlamningsUppgift
                             Console.WriteLine("Book not available in stock.");
                             return false;
                         }
-                        if (book.Amount > 0)
+                        var soldBook = new SoldBooks
                         {
-                            var soldBook = new SoldBooks
-                            {
-                                Title = book.Title,
-                                Author = book.Author,
-                                Price = book.Price,
-                                Amount = book.Amount,
-                                BookCategory = book.BookCategory,
-                                UsersId = userID,
-                                PurchaseDate = DateTime.Now
-                            };
-                            db.SoldBooks.Add(soldBook);
-                            book.Amount -= 1;
-                            db.SaveChanges();
-                            return true;
-                        }
+                            Title = book.Title,
+                            Author = book.Author,
+                            Price = book.Price,
+                            Amount = book.Amount,
+                            BookCategory = book.BookCategory,
+                            UsersId = userID,
+                            PurchaseDate = DateTime.Now
+                        };
+                        db.SoldBooks.Add(soldBook);
+                        book.Amount -= 1;
+                        db.SaveChanges();
+                        return true;
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Console.WriteLine("Failed purchase");
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return false;
             }
@@ -308,18 +305,24 @@ namespace WebbShopInlamningsUppgift
         /// Checks to see if user is still active
         /// </summary>
         /// <param name="userId"></param>
-        /// <returns>string</returns>
+        /// <returns>string if success, empty string if not</returns>
         public string Ping(int userId)
         {
             using (var db = new WebbshopContext())
             {
-                var user = db.Users.FirstOrDefault(u => u.ID == userId);
-                bool isActive = CheckSessionTimer(user);
-                if (isActive)
+                try 
                 {
-                    return "Pong";
+                    var user = db.Users.FirstOrDefault(u => u.ID == userId);
+                    bool isActive = CheckSessionTimer(user);
+                    if (isActive)
+                    {
+                        return "Pong";
+                    }
                 }
-
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
+                }
                 return string.Empty;
             }
         }
@@ -335,22 +338,29 @@ namespace WebbShopInlamningsUppgift
         {
             using (var db = new WebbshopContext())
             {
-                var user = db.Users.FirstOrDefault(u => u.Name == name);
-                if (user == null && password == passwordVerify)
+                try 
                 {
-                    var newlyCreatedUser = new Users
+                    var user = db.Users.FirstOrDefault(u => u.Name == name);
+                    if (user == null && password == passwordVerify)
                     {
-                        Name = name,
-                        Password = password
-                    };
-                    db.Users.Add(newlyCreatedUser);
-                    db.SaveChanges();
-                    return true;
+                        var newlyCreatedUser = new Users
+                        {
+                            Name = name,
+                            Password = password,
+                            IsActive = true,
+                            IsAdmin = false
+                        };
+                        db.Users.Add(newlyCreatedUser);
+                        db.SaveChanges();
+                        return true;
+                    }
                 }
-
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
+                }
                 return false;
             }
-
         }
 
         //--------------------------------------------------------------------------------------
@@ -402,9 +412,9 @@ namespace WebbShopInlamningsUppgift
                         return true;
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Console.WriteLine("Failed to add book");
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return false;
             }
@@ -444,9 +454,9 @@ namespace WebbShopInlamningsUppgift
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Console.WriteLine("Failed to set amount");
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return false;
             }
@@ -480,9 +490,9 @@ namespace WebbShopInlamningsUppgift
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Console.WriteLine("Failed to find users");
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return new List<Users>();
             }
@@ -517,9 +527,9 @@ namespace WebbShopInlamningsUppgift
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Console.WriteLine("Failed to find book");
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return new List<Users>();
             }
@@ -561,9 +571,9 @@ namespace WebbShopInlamningsUppgift
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Console.WriteLine("Failed to update book");
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return false;
             }
@@ -612,7 +622,7 @@ namespace WebbShopInlamningsUppgift
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.Message);
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return false;
             }
@@ -653,9 +663,9 @@ namespace WebbShopInlamningsUppgift
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Console.WriteLine("Failed to add category");
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return false;
             }
@@ -692,9 +702,9 @@ namespace WebbShopInlamningsUppgift
                         return true;
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Console.WriteLine("Failed to set book category");
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return false;
             }
@@ -732,9 +742,9 @@ namespace WebbShopInlamningsUppgift
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Console.WriteLine("Failed to update category");
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return false;
             }
@@ -786,7 +796,7 @@ namespace WebbShopInlamningsUppgift
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.Message);
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return false;
             }
@@ -821,7 +831,9 @@ namespace WebbShopInlamningsUppgift
                             var newlyCreatedUser = new Users
                             {
                                 Name = userName,
-                                Password = userPassword
+                                Password = userPassword,
+                                IsActive = true,
+                                IsAdmin = false
                             };
                             db.Users.Add(newlyCreatedUser);
                             db.SaveChanges();
@@ -829,9 +841,9 @@ namespace WebbShopInlamningsUppgift
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Console.WriteLine("Failed to create user");
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return false;
             }
@@ -865,9 +877,9 @@ namespace WebbShopInlamningsUppgift
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Console.WriteLine("Failed to find sold items");
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return new List<SoldBooks>();
             }
@@ -902,9 +914,9 @@ namespace WebbShopInlamningsUppgift
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Console.WriteLine("Failed to get total price");
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return 0;
             }
@@ -947,7 +959,7 @@ namespace WebbShopInlamningsUppgift
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.Message);
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return 0;
             }
@@ -985,9 +997,9 @@ namespace WebbShopInlamningsUppgift
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Console.WriteLine("Failed to promote user");
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return false;
             }
@@ -1024,9 +1036,9 @@ namespace WebbShopInlamningsUppgift
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Console.WriteLine("Failed to demote user");
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return false;
             }
@@ -1063,9 +1075,9 @@ namespace WebbShopInlamningsUppgift
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Console.WriteLine("Failed to activate user");
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return false;
             }
@@ -1102,9 +1114,9 @@ namespace WebbShopInlamningsUppgift
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Console.WriteLine("Failed to inactivate user");
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
                 }
                 return false;
             }
@@ -1120,20 +1132,27 @@ namespace WebbShopInlamningsUppgift
         {
             using (var db = new WebbshopContext())
             {
-                var timer = DateTime.Now - user.SessionTimer;
-                var minutes = timer.TotalMinutes;
-                if (minutes < 15)
+                try
                 {
-                    user.IsActive = true;
-                    db.SaveChanges();
-                    return true;
-                }
-                else
-                {
+                    var timer = DateTime.Now - user.SessionTimer;
+                    var minutes = timer.TotalMinutes;
+                    if (minutes < 15)
+                    {
+                        user.IsActive = true;
+                        user.SessionTimer = DateTime.Now;
+                        db.SaveChanges();
+                        return true;
+                    }
+
                     user.IsActive = false;
                     db.SaveChanges();
                     return false;
                 }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Exception was thrown: {e.Message}");
+                }
+                return false;
             }
         }
     }
